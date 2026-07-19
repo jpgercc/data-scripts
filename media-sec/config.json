@@ -1,0 +1,87 @@
+{
+  "_comentario": "Configuração do verificador de arquivos. Edite livremente — o script sempre lê este arquivo relativo à sua própria localização, então funciona não importa de onde você o execute.",
+
+  "limites": {
+    "max_file_size_bytes": 209715200,
+    "max_text_size_bytes": 5242880,
+    "max_linhas_fallback_texto": 200000,
+    "bytes_lidos_para_poliglota": 4096
+  },
+
+  "timeouts_segundos": {
+    "file_cmd_fallback": 5,
+    "clamscan": 60,
+    "ffprobe": 15,
+    "yara": 15
+  },
+
+  "clamd": {
+    "socket_path": "/var/run/clamav/clamd.ctl"
+  },
+
+  "seguranca": {
+    "modo_fail_closed": true,
+    "permitir_fallback_clamscan_cli": true,
+    "mover_para_quarentena": false,
+    "pasta_quarentena": "~/quarentena_verificador"
+  },
+
+  "observabilidade": {
+    "pasta_logs": "~/.verificador_arquivos/logs",
+    "salvar_json_por_arquivo": true
+  },
+
+  "assinaturas_executaveis_mime": [
+    "x-dosexec",
+    "x-executable",
+    "x-pie-executable",
+    "x-sharedlib",
+    "x-mach-binary"
+  ],
+
+  "assinaturas_poliglota": {
+    "descricao": "Magic bytes em hexadecimal usados na heurística de poliglota. 'categoria' é 'binario' ou 'dado' — um arquivo com assinaturas das duas categorias ao mesmo tempo é suspeito.",
+    "itens": [
+      { "hex": "4d5a", "nome": "PE/DOS executável", "categoria": "binario" },
+      { "hex": "7f454c46", "nome": "ELF executável", "categoria": "binario" },
+      { "hex": "474946383761", "nome": "GIF87a", "categoria": "dado" },
+      { "hex": "474946383961", "nome": "GIF89a", "categoria": "dado" },
+      { "hex": "89504e470d0a1a0a", "nome": "PNG", "categoria": "dado" },
+      { "hex": "255044462d", "nome": "PDF", "categoria": "dado" },
+      { "hex": "504b0304", "nome": "ZIP/Office/JAR", "categoria": "dado" }
+    ]
+  },
+
+  "comandos_perigosos_texto_fallback": [
+    "rm -rf", "chmod +x", "wget ", "curl ", "eval(", "exec("
+  ],
+
+  "yara": {
+    "arquivo_regras": "regras.yar"
+  },
+
+  "python_ast": {
+    "descricao": "Usado por analisar_python() para detectar código Python perigoso via AST, em vez de regex.",
+    "chamadas_perigosas": [
+      "eval", "exec", "compile", "__import__",
+      "os.system", "os.popen", "os.execv", "os.execl", "os.spawnl",
+      "subprocess.Popen", "subprocess.call", "subprocess.run", "subprocess.check_output",
+      "pickle.loads", "pickle.load",
+      "marshal.loads", "marshal.load",
+      "importlib.import_module", "ctypes.CDLL", "ctypes.cdll.LoadLibrary"
+    ],
+    "modulos_suspeitos": [
+      "marshal", "ctypes", "pty", "telnetlib"
+    ],
+    "combinacao_suspeita_base64_exec": true
+  },
+
+  "caracteres_ocultos": {
+    "descricao": "Codepoints Unicode usados para ofuscar/esconder código malicioso (ex: comentar visualmente código real, inverter direção de leitura). Detectados por analisar_python() e pela auditoria de texto.",
+    "codepoints_hex": [
+      "200b", "200c", "200d", "feff",
+      "202a", "202b", "202c", "202d", "202e",
+      "2066", "2067", "2068", "2069"
+    ]
+  }
+}
