@@ -1,0 +1,847 @@
+{
+  "name": "POC (LTS)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "\n``` txt\n[ Get Messages ] (Filter unread messages in the 'n8n' label)\n➔ ​​[ Sort ] (Sort by date: oldest first)\n➔ ​​[ AI API Classify ] (Initial triage via Gemini 2.5)\n➔ ​​[ L1 Output Gatekeeper ] (Check Pipe '|' Regex)\n│\n├── L1 TRUE (Correct format) ➔ [ Switch / Router ]\n│                                  ├── urgent ➔ [ Telegram Urgent ] ➔ [ Label n8n-done ]\n│                                  ├── unknown ➔ [ Label n8n-unknow ]\n│                                  ├── commercial ➔ [ Google Sheets ] ➔ [ Label n8n-done ]\n│                                  ├── support ➔ [ AI Draft Generator ] ➔ [ Create Draft ] ➔ [ Label n8n-done ]\n│                                  └── FALLBACK ➔ [ Telegram Fallback ] ➔ [ Label n8n-fallback ] ➔ [ Stop Error ]\n│\n└── L1 FALSE (Invalid format)\n        ➔ ​​[ Fallback AI Model ] (Second attempt with Gemini 3.5)\n        ➔ ​​[ L2 Output Gatekeeper ] (Validate if text is an accepted category)\n        │\n        ├── L2 TRUE ➔ (Connect back to the same [ Switch / Router ])\n        │\n        └── L2 FALSE ➔ [ Telegram Error ] ➔ [ Label n8n-fallback ]\n```",
+        "height": 464,
+        "width": 1056
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -64,
+        -128
+      ],
+      "typeVersion": 1,
+      "id": "599eb078-922f-4064-ba3f-1b060df4f2c1",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() }}",
+                    "rightValue": "urgente",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "id": "1a54ac28-ecba-4052-b025-872c610961b5"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0dd39ade-809e-4f04-a740-0cae10715a31",
+                    "leftValue": "={{ $json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() }}",
+                    "rightValue": "desconhecido",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b3ce423f-f9d5-40b1-a802-ed605f00fd23",
+                    "leftValue": "={{ $json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() }}",
+                    "rightValue": "comercial",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e0e18325-29a3-42a5-bda3-b597e61f3456",
+                    "leftValue": "={{ $json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() }}",
+                    "rightValue": "suporte",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        880,
+        384
+      ],
+      "id": "aef68f4a-5156-41c4-abfe-ed9e3943b776",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 2,
+        "filters": {
+          "includeSpamTrash": false,
+          "q": "label:n8n -label:n8n/n8n-done -label:n8n/n8n-unknow",
+          "readStatus": "unread"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        48,
+        448
+      ],
+      "id": "8108cf98-fdb7-43f1-b0e3-96e37609ccaa",
+      "name": "Get Messages",
+      "webhookId": "REDACTED",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REDACTED",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Get Messages').item.json.id }}",
+        "labelIds": [
+          "Label_8455258411385314336"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1152,
+        288
+      ],
+      "id": "fab132ef-7ab7-4049-84c6-5a53954d2b23",
+      "name": "Unkonw | Add Label",
+      "webhookId": "REDACTED",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REDACTED",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "REDACTED",
+        "text": "=📢 * Email URGENTE recebido! *\n\n👤 Nome: {{ $('Get Messages').item.json.From.split('<')[0].trim() }}\n📧 E-mail: {{ $('Get Messages').item.json.From.match(/<([^>]+)>/)[1] }}\n📝 Assunto: {{ $('Get Messages').item.json.Subject }}\n\n💬 Mensagem: \n{{ $('Get Messages').item.json.snippet }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1152,
+        128
+      ],
+      "id": "d5770cd7-99b5-4045-aae6-19096d046114",
+      "name": "Urgent | Send Message",
+      "webhookId": "REDACTED",
+      "credentials": {
+        "telegramApi": {
+          "id": "REDACTED",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REDACTED",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "REDACTED"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Data/Hora do E-mail": "={{ new Date(parseInt($('Get Messages').item.json.internalDate)).toLocaleString('pt-BR') }}",
+            "Nome do Remetente": "={{ $('Get Messages').item.json.From.split('<')[0].trim() }}",
+            "\nE-mail de Contato": "={{ $('Get Messages').item.json.From.match(/<([^>]+)>/)[1] }}",
+            "Assunto": "={{ $('Get Messages').item.json.Subject }}",
+            "Mensagem/Corpo": "={{ $('Get Messages').item.json.snippet }}",
+            "Status do Atendimento": "NA"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Data/Hora do E-mail",
+              "displayName": "Data/Hora do E-mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome do Remetente",
+              "displayName": "Nome do Remetente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "\nE-mail de Contato",
+              "displayName": "\nE-mail de Contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Assunto",
+              "displayName": "Assunto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mensagem/Corpo",
+              "displayName": "Mensagem/Corpo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status do Atendimento",
+              "displayName": "Status do Atendimento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1152,
+        448
+      ],
+      "id": "26cc12e6-766d-4137-8b7c-cad4bf79e6af",
+      "name": "Sales Team | Append Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REDACTED",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "=Re: {{ $('Get Messages').item.json.Subject }}",
+        "message": "={{ $json.candidates[0].content.parts[0].text }}",
+        "options": {
+          "threadId": "={{ $('Get Messages').item.json.threadId }}",
+          "sendTo": "={{ $('Get Messages').item.json.From.match(/<([^>]+)>/)[1] }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        624
+      ],
+      "id": "e6cc65b4-ce12-4a27-9049-40ddd83f7b04",
+      "name": "Create Draft Email",
+      "webhookId": "REDACTED",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REDACTED",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "REDACTED"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"Você é um atendente sênior de suporte técnico e helpdesk. Seu objetivo é redigir uma resposta profissional, empática e prestativa para o e-mail recebido abaixo, garantindo ao usuário que o problema foi recebido e fornecendo uma orientação inicial ou posicionamento.\\n\\nDIRETRIZES DA RESPOSTA:\\n- Use um tom profissional, acolhedor e focado em solução.\\n- Identifique-se cordialmente como a Equipe de Suporte Técnico.\\n- Não invente dados técnicos ou prazos específicos se não houver contexto para isso.\\n\\nFORMATO ESTRITO DE SAÍDA:\\nResponda APENAS com o texto final do e-mail de resposta (incluindo assunto sugerido e corpo). Não inclua introduções como 'Aqui está sua resposta', não use tags HTML e nunca coloque blocos de código com markdown (como ```).\\n\\nDADOS DO E-MAIL RECEBIDO:\\nRemetente: {{ $('Get Messages').item.json.From }}\\nAssunto: {{ $('Get Messages').item.json.Subject }}\\nConteúdo: {{ $('Get Messages').item.json.snippet }}\"\n        }\n      ]\n    }\n  ],\n  \"generationConfig\": {\n    \"temperature\": 0.7,\n    \"maxOutputTokens\": 1000\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1152,
+        624
+      ],
+      "id": "8abf8130-0d11-4d8c-b84a-d776e5830f65",
+      "name": "AI API Generates"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "REDACTED"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"Você é um analista de triagem técnica. Seu único objetivo é identificar a CAUSA RAIZ (o fato gerador) e o IMPACTO REAL do e-mail para encaminhá-lo ao departamento correto.\\n\\nIGNORE COMPLETAMENTE:\\n- O tom de desespero, termos como 'urgente', 'urgência total' ou o cargo do remetente.\\n\\nREGRAS CRÍTICAS DE CLASSIFICAÇÃO:\\n- urgente -> Apenas para falhas críticas de infraestrutura global, servidores caídos, indisponibilidade TOTAL do sistema para todos os usuários ou ameaças jurídicas iminentes. \\n- suporte -> Problemas operacionais do dia a dia, erros de login individuais, bugs de software pontuais, redefinição de senha ou problemas de acesso de contas específicas (mesmo que o usuário alegue urgência máxima).\\n- comercial -> Interesse em preços, planos, contratação ou upgrade.\\n- desconhecido -> Spams, logs ou notificações automáticas.\\n\\nFORMATO ESTRITO DE SAÍDA:\\nResponda APENAS com a categoria em letras minúsculas, o caractere | e o ID do e-mail. Exemplo: suporte|12345\\n\\nDADOS DO E-MAIL PARA ANÁLISE:\\nID: {{ $json.id || $('Get Messages').item.json.id }}\\nRemetente: {{ $json.From || $('Get Messages').item.json.From }}\\nAssunto: {{ $json.Subject || $('Get Messages').item.json.Subject }}\\nConteúdo: {{ $json.snippet || $('Get Messages').item.json.snippet }}\"\n        }\n      ]\n    }\n  ],\n  \"generationConfig\": {\n    \"temperature\": 0,\n    \"maxOutputTokens\": 650\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        432,
+        448
+      ],
+      "id": "54b0ac1e-d891-47f5-b13f-76cb62a1acbd",
+      "name": "AI API Classify"
+    },
+    {
+      "parameters": {
+        "chatId": "REDACTED",
+        "text": "=📢 * Switcher node catched invalid classification, check node cases in n8n workflow at: exemplo.com! *\n\nAI:\nClassification: {{ $json.candidates[0].content.parts[0].text }}\nModel: {{ $json.modelVersion }}\n\n📊 TOKEN USAGE:\n🔹 Prompt: {{ $json.usageMetadata.promptTokenCount }}\n🔹 Thinking: {{ $json.usageMetadata.thoughtsTokenCount }}\n🔹 Candidates: {{ $json.usageMetadata.candidatesTokenCount }}\n Total: {{ $json.usageMetadata.totalTokenCount }}\n\nEMAIL:\n👤 Name: {{ $('Get Messages').item.json.From.split('<')[0].trim() }}\n📧 E-mail: {{ $('Get Messages').item.json.From.match(/<([^>]+)>/)[1] }}\n📝 Subject: {{ $('Get Messages').item.json.Subject }}\n\n💬 Message: \n{{ $('Get Messages').item.json.snippet }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1152,
+        784
+      ],
+      "id": "fbc3733a-970c-4b40-8d52-9320c5bcbad6",
+      "name": "Fallback | Send Message",
+      "webhookId": "REDACTED",
+      "credentials": {
+        "telegramApi": {
+          "id": "REDACTED",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "errorMessage": "AI email classification didnt match preseted switch route cases!"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        992
+      ],
+      "id": "2843a3b0-393f-4c57-9530-2d28c0cca7c6",
+      "name": "Stop Error"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Get Messages').item.json.id }}",
+        "labelIds": [
+          "Label_5400675349664117671"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        992
+      ],
+      "id": "cfb5c1c2-f124-4fbd-a6ed-51d318796417",
+      "name": "Add ' n8n-fallback' Label to Email",
+      "webhookId": "REDACTED",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REDACTED",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Get Messages').item.json.id }}",
+        "labelIds": [
+          "Label_1320143003582439255"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1728,
+        448
+      ],
+      "id": "78b8f315-2f37-47ea-8d33-67c706c4487c",
+      "name": "Add 'n8n-done' Label to Email",
+      "webhookId": "REDACTED",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REDACTED",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "REDACTED",
+        "text": "=📢 * AI model failed in classifying data, check n8n workflow at: exemplo.com! *\n\nAI:\nClassification: {{ $json.candidates[0].content.parts[0].text }}\nModel: {{ $json.modelVersion }}\n\n📊 TOKEN USAGE:\n🔹 Prompt: {{ $json.usageMetadata.promptTokenCount }}\n🔹 Thinking: {{ $json.usageMetadata.thoughtsTokenCount }}\n🔹 Candidates: {{ $json.usageMetadata.candidatesTokenCount }}\n Total: {{ $json.usageMetadata.totalTokenCount }}\n\n👤 Name: {{ $('Get Messages').item.json.From.split('<')[0].trim() }}\n📧 E-mail: {{ $('Get Messages').item.json.From.match(/<([^>]+)>/)[1] }}\n📝 Subject: {{ $('Get Messages').item.json.Subject }}\n\n💬 Message: \n{{ $('Get Messages').item.json.snippet }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        992
+      ],
+      "id": "36a283fb-9e60-4b1c-8547-7074c0fb324d",
+      "name": "Send Message",
+      "webhookId": "REDACTED",
+      "credentials": {
+        "telegramApi": {
+          "id": "REDACTED",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "REDACTED"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"Você é um analista de triagem técnica. Seu único objetivo é identificar a CAUSA RAIZ (o fato gerador) e o IMPACTO REAL do e-mail para encaminhá-lo ao departamento correto.\\n\\nIGNORE COMPLETAMENTE:\\n- O tom de desespero, termos como 'urgente', 'urgência total' ou o cargo do remetente.\\n\\nREGRAS CRÍTICAS DE CLASSIFICAÇÃO:\\n- urgente -> Apenas para falhas críticas de infraestrutura global, servidores caídos, indisponibilidade TOTAL do sistema para todos os usuários ou ameaças jurídicas iminentes. \\n- suporte -> Problemas operacionais do dia a dia, erros de login individuais, bugs de software pontuais, redefinição de senha ou problemas de acesso de contas específicas (mesmo que o usuário alegue urgência máxima).\\n- comercial -> Interesse em preços, planos, contratação ou upgrade.\\n- desconhecido -> Spams, logs ou notificações automáticas.\\n\\nFORMATO ESTRITO DE SAÍDA:\\nResponda APENAS com a categoria em letras minúsculas, o caractere | e o ID do e-mail. Exemplo: suporte|12345\\n\\nDADOS DO E-MAIL PARA ANÁLISE:\\nID: {{ $json.id || $('Get Messages').item.json.id }}\\nRemetente: {{ $json.From || $('Get Messages').item.json.From }}\\nAssunto: {{ $json.Subject || $('Get Messages').item.json.Subject }}\\nConteúdo: {{ $json.snippet || $('Get Messages').item.json.snippet }}\"\n        }\n      ]\n    }\n  ],\n  \"generationConfig\": {\n    \"temperature\": 0,\n    \"maxOutputTokens\": 650\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        448,
+        704
+      ],
+      "id": "fddb6fab-3b55-402a-93c7-9163ece80baa",
+      "name": "Fallback AI Model"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7bda5304-3064-4e76-ab39-6a39c68c13f8",
+              "leftValue": "={{ $json.candidates[0].content.parts[0].text.trim() }}",
+              "rightValue": "^[a-z]+(\\|.*)?$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        608,
+        448
+      ],
+      "id": "e41e0bc2-0b2d-4775-be53-35cf059652e0",
+      "name": "L1 Output Gatekeeper"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7bda5304-3064-4e76-ab39-6a39c68c13f8",
+              "leftValue": "={{ $json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ? (['urgente', 'suporte', 'comercial', 'desconhecido'].indexOf($json.candidates[0].content.parts[0].text.trim().split('|')[0]) !== -1 ? 'valido' : 'invalido') : 'invalido' }}",
+              "rightValue": "valido",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        640,
+        704
+      ],
+      "id": "ade5dd27-acfd-4716-9bbc-a79d112b1fd4",
+      "name": "L2 Output Gatekeeper"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "internalDate"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        256,
+        448
+      ],
+      "id": "d43dafc9-82f7-4c86-8f42-8785b1538231",
+      "name": "Sort"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Urgent | Send Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unkonw | Add Label",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sales Team | Append Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI API Generates",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fallback | Send Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Messages": {
+      "main": [
+        [
+          {
+            "node": "Sort",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unkonw | Add Label": {
+      "main": [
+        []
+      ]
+    },
+    "Urgent | Send Message": {
+      "main": [
+        [
+          {
+            "node": "Add 'n8n-done' Label to Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sales Team | Append Sheet": {
+      "main": [
+        [
+          {
+            "node": "Add 'n8n-done' Label to Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Draft Email": {
+      "main": [
+        [
+          {
+            "node": "Add 'n8n-done' Label to Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI API Generates": {
+      "main": [
+        [
+          {
+            "node": "Create Draft Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI API Classify": {
+      "main": [
+        [
+          {
+            "node": "L1 Output Gatekeeper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fallback | Send Message": {
+      "main": [
+        [
+          {
+            "node": "Add ' n8n-fallback' Label to Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add ' n8n-fallback' Label to Email": {
+      "main": [
+        [
+          {
+            "node": "Stop Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message": {
+      "main": [
+        [
+          {
+            "node": "Add ' n8n-fallback' Label to Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fallback AI Model": {
+      "main": [
+        [
+          {
+            "node": "L2 Output Gatekeeper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "L1 Output Gatekeeper": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fallback AI Model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "L2 Output Gatekeeper": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort": {
+      "main": [
+        [
+          {
+            "node": "AI API Classify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "REDACTED",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "REDACTED"
+  },
+  "nodeGroups": [],
+  "id": "REDACTED",
+  "tags": []
+}
