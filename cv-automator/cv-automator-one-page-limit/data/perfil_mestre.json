@@ -30,26 +30,29 @@
     }
   ],
   "habilidades": {
-    "cloud": ["AWS (EC2, EKS, RDS, S3, IAM, VPC, Lambda)", "GCP (GKE, Cloud Run)", "Azure (AKS)"],
-    "containers": ["Docker", "Kubernetes", "Helm", "Kustomize"],
-    "ci_cd": ["GitHub Actions", "GitLab CI", "Jenkins", "ArgoCD"],
-    "iac": ["Terraform", "Ansible", "Pulumi"],
+    "cloud": ["AWS", "Oracle Cloud", "Azure", "Google Cloud"],
+    "containers": ["Docker", "OpenShift"],
+    "ci_cd": ["GitHub Actions", "GitLab CI", "Jenkins", "OpenShift Pipelines"],
+    "iac": ["Terraform", "Ansible", "Cloud Development Kit (CDK)", "OpenTofu"],
     "observabilidade": ["Prometheus", "Grafana", "Datadog", "ELK Stack", "Jaeger"],
-    "linguagens": ["Python", "Bash", "Go (básico)", "YAML", "HCL"],
-    "seguranca": ["Vault (HashiCorp)", "SOPS", "OPA/Gatekeeper", "Trivy", "Falco"],
-    "redes": ["DNS", "HTTP/HTTPS", "TCP/IP", "Nginx", "HAProxy", "Istio"]
+    "linguagens": ["Python", "Bash", "JavaScript", "TypeScript", "Java", "Dart", "C#", "C++", "SQL", "HTML", "CSS", "JSON"],
+    "seguranca": ["TLS/SSL", "OAuth2", "JWT", "OpenID Connect", "SAML", "WAF", "IAM"],
+    "redes": ["DNS", "HTTP/HTTPS", "TCP/IP", "Nginx", "VPNs", "Load Balancers", "Firewalls", "CDN", "Reverse Proxy", "Network Monitoring", "Network Troubleshooting", "Network Security", "Network Protocols", "Network Configuration", "Network Performance Optimization", "Network Automation", "Network Design", "Network Architecture", "Network Virtualization", "Network Segmentation", "Network Redundancy", "Network Failover", "Network Troubleshooting Tools"]
   },
   "formacao": [
     {
-      "instituicao": "Universidade Estadual de São Paulo",
+      "instituicao": "Universidade Ritter dos Reis (UNIRITTER) – Porto Alegre, RS",
       "curso": "Bacharelado em Ciência da Computação",
-      "periodo": "2012 – 2016"
+      "periodo": "2023 – 2027 (em andamento)"
     }
   ],
   "certificacoes": [
-    "AWS Certified Solutions Architect – Associate (2022)",
-    "Certified Kubernetes Administrator – CKA (2023)",
-    "HashiCorp Terraform Associate (2023)"
+    "CCNA: Introduction to Networks – Cisco (2023)",
+    "AWS Academy Graduate - Data Engineering – AWS (2025)",
+    "AWS Academy Graduate - Machine Learning Foundations – AWS (2025)",
+    "Red Hat OpenShift Administration I: Operating a Production Cluster (DO180 - RHA) - Ver. 4.14 – Red Hat (2025)",
+    "Red Hat System Administration II (RH134 - RHA) - Ver. 9.3 – Red Hat (2025)",
+    "Red Hat System Administration I (RH124 - RHA) - Ver. 9.3 – Red Hat (2025)"
   ],
   "idiomas": [
     {"idioma": "Português", "nivel": "Nativo"},
