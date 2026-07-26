@@ -88,8 +88,8 @@ Sua tarefa é adaptar um Perfil Mestre para uma vaga específica.
 
 REGRAS OBRIGATÓRIAS:
 1. Retorne EXCLUSIVAMENTE JSON válido, sem markdown, sem explicações.
-2. Mantenha 100% de veracidade — não invente informações.
-3. Priorize experiências e habilidades mais relevantes para a vaga.
+2. Mantenha o perfil mestre como fonte da verdade — não invente informações.
+3. Priorize experiências e habilidades do perfil mestre mais relevantes para a vaga.
 4. O resumo deve ter entre 3 e 5 frases focadas nos requisitos da vaga.
 5. Selecione no máximo 3 experiências mais relevantes.
 6. Mantenha as responsabilidades como bullet points concisos e quantificados.

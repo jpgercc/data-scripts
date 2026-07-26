@@ -32,12 +32,12 @@
   "habilidades": {
     "cloud": ["AWS", "Oracle Cloud", "Azure", "Google Cloud"],
     "containers": ["Docker", "OpenShift"],
-    "ci_cd": ["GitHub Actions", "GitLab CI", "Jenkins", "OpenShift Pipelines"],
+    "ci_cd": ["GitHub Actions", "GitLab CI", "Jenkins", "OpenShift Pipelines", "Scrum", "Kanban", "Agile Methodologies", "Modeling and Design Patterns", "Software Architecture", "System Design"],
     "iac": ["Terraform", "Ansible", "Cloud Development Kit (CDK)", "OpenTofu"],
-    "observabilidade": ["Prometheus", "Grafana", "Datadog", "ELK Stack", "Jaeger"],
-    "linguagens": ["Python", "Bash", "JavaScript", "TypeScript", "Java", "Dart", "C#", "C++", "SQL", "HTML", "CSS", "JSON"],
-    "seguranca": ["TLS/SSL", "OAuth2", "JWT", "OpenID Connect", "SAML", "WAF", "IAM"],
-    "redes": ["DNS", "HTTP/HTTPS", "TCP/IP", "Nginx", "VPNs", "Load Balancers", "Firewalls", "CDN", "Reverse Proxy", "Network Monitoring", "Network Troubleshooting", "Network Security", "Network Protocols", "Network Configuration", "Network Performance Optimization", "Network Automation", "Network Design", "Network Architecture", "Network Virtualization", "Network Segmentation", "Network Redundancy", "Network Failover", "Network Troubleshooting Tools"]
+    "observabilidade": ["Big Data Technologies", "Natural Language Processing (NLP)", "Computer Vision", "AI Model Monitoring", "AI Model Optimization", "WebSockets", "Microservices", "Serverless Architecture", "Event-Driven Architecture", "Message Queues", "Pub/Sub Systems", "Data Streaming", "Data Pipelines", "ETL Processes", "Data Warehousing", "Data Lakes", "Prometheus", "Grafana", "Datadog", "ELK Stack", "Jaeger", "Gerenciamento de Logs", "Gerenciamento de Memória", "Multi Threading", "Programação Paralela", "Binary Encode/Decode", "Protobuf", "debugging"],
+    "linguagens": ["Python", "Playwrigth", "Selenium", "BeautifulSoup", "camoufox", "PyAutoGUI", "openpyxl", "Bash", "JavaScript", "TypeScript", "Java", "Dart", "C#", "C++", "SQL", "HTML", "CSS", "JSON", "Flutter", "Node.js", "React", "Spring Boot", "FastAPI", "Flask", "Django", "Express.js", "REST APIs", "GraphQL", "RESTful APIs", "Linux", "Windows", "PostgreSQL", "MySQL", "SQL lite", "Scrapy", "Pandas", "NumPy", "Matplotlib", "Seaborn", "Scikit-learn", "TensorFlow", "PyTorch", "Keras", "OpenCV", "Hugging Face Transformers", "Tesseract OCR", "OpenGL", "Gen AI", "Make", "n8n"],
+    "seguranca": ["TLS/SSL", "OAuth2", "JWT"],
+    "redes": ["WebSockets", "DNS", "HTTP/HTTPS", "TCP/IP", "Nginx", "VPNs", "Load Balancers", "Firewalls", "CDN", "Reverse Proxy", "Network Monitoring", "Network Troubleshooting", "Network Security", "Network Protocols", "Network Configuration", "Network Performance Optimization", "Network Automation", "Network Design", "Network Architecture", "Network Virtualization", "Network Segmentation", "Network Redundancy", "Network Failover", "Network Troubleshooting Tools"]
   },
   "formacao": [
     {
