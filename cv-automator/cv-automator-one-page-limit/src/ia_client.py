@@ -1,7 +1,7 @@
 """
 ia_client.py — Limpeza de vaga, construção de prompts e comunicação com IA.
 
-Suporta Groq e Google Gemini.
+Usa o 9Router por sua API compatível com OpenAI.
 Implementa retry com backoff exponencial para HTTP 429.
 Chaves nunca aparecem em logs.
 """
@@ -10,6 +10,8 @@ import json
 import logging
 import re
 from typing import Any
+
+import httpx
 
 from tenacity import (
     retry,
@@ -87,9 +89,10 @@ Você é um especialista em currículos ATS (Applicant Tracking System).
 Sua tarefa é adaptar um Perfil Mestre para uma vaga específica.
 
 REGRAS OBRIGATÓRIAS:
+0. O propósito é que você filtre o perfil generalista, procure match-cases entre a vaga e o perfil, e, entreque o schema compativel com a vaga focando na persepção de valor para a vaga.
 1. Retorne EXCLUSIVAMENTE JSON válido, sem markdown, sem explicações.
 2. Mantenha o perfil mestre como fonte da verdade — não invente informações.
-3. Priorize experiências e habilidades do perfil mestre mais relevantes para a vaga.
+3. Priorize experiências e habilidades do perfil mestre mais relevantes para a vaga, e, evite adicionar habilidades e categorias irrelevantes para a vaga.
 4. O resumo deve ter entre 3 e 5 frases focadas nos requisitos da vaga.
 5. Selecione no máximo 3 experiências mais relevantes.
 6. Mantenha as responsabilidades como bullet points concisos e quantificados.
@@ -165,52 +168,43 @@ def _parse_json_from_response(text: str) -> dict[str, Any]:
     before_sleep=before_sleep_log(logger, logging.WARNING),
     reraise=True,
 )
-def _call_groq(prompt: str) -> dict[str, Any]:
-    from groq import Groq, RateLimitError as GroqRateLimitError
-
-    client = Groq(api_key=settings.groq_api_key)
+def _call_9router(prompt: str) -> dict[str, Any]:
+    """Envia uma conclusão de chat para o endpoint OpenAI-compatível do 9Router."""
+    base_url = settings.router_base_url.rstrip("/")
     try:
-        response = client.chat.completions.create(
-            model=settings.effective_model,
-            messages=[
-                {"role": "system", "content": _SYSTEM_PROMPT},
-                {"role": "user", "content": prompt},
-            ],
-            temperature=0.2,
-            max_tokens=4096,
+        response = httpx.post(
+            f"{base_url}/chat/completions",
+            headers={
+                "Authorization": f"Bearer {settings.router_api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": settings.effective_model,
+                "messages": [
+                    {"role": "system", "content": _SYSTEM_PROMPT},
+                    {"role": "user", "content": prompt},
+                ],
+                "temperature": 0.2,
+                "max_tokens": 4096,
+                # O 9Router pode transmitir múltiplos blocos quando este campo
+                # não é explícito; o currículo precisa de uma resposta completa.
+                "stream": False,
+            },
+            timeout=60.0,
         )
-    except GroqRateLimitError as exc:
-        raise RateLimitError("Groq rate limit atingido.") from exc
+    except httpx.HTTPError as exc:
+        raise RuntimeError("Não foi possível conectar ao 9Router.") from exc
 
-    content = response.choices[0].message.content or ""
+    if response.status_code == 429:
+        raise RateLimitError("9Router rate limit atingido.")
+    response.raise_for_status()
+
+    data = response.json()
+    try:
+        content = data["choices"][0]["message"]["content"] or ""
+    except (KeyError, IndexError, TypeError) as exc:
+        raise ValueError("Resposta inválida recebida do 9Router.") from exc
     return _parse_json_from_response(content)
-
-
-@retry(
-    retry=retry_if_exception_type(RateLimitError),
-    stop=stop_after_attempt(_MAX_ATTEMPTS),
-    wait=wait_exponential(multiplier=1, min=_WAIT_MIN, max=_WAIT_MAX),
-    before_sleep=before_sleep_log(logger, logging.WARNING),
-    reraise=True,
-)
-def _call_gemini(prompt: str) -> dict[str, Any]:
-    import google.generativeai as genai
-    from google.api_core.exceptions import ResourceExhausted
-
-    genai.configure(api_key=settings.gemini_api_key)
-    model = genai.GenerativeModel(
-        model_name=settings.effective_model,
-        system_instruction=_SYSTEM_PROMPT,
-    )
-    try:
-        response = model.generate_content(
-            prompt,
-            generation_config={"temperature": 0.2, "max_output_tokens": 4096},
-        )
-    except ResourceExhausted as exc:
-        raise RateLimitError("Gemini rate limit atingido.") from exc
-
-    return _parse_json_from_response(response.text)
 
 
 # ─────────────────────────────────────────────────────────────
@@ -232,9 +226,7 @@ def generate_curriculum(perfil: dict[str, Any], vaga_raw: str) -> dict[str, Any]
     prompt = build_prompt(perfil, vaga_limpa)
 
     provider = settings.ai_provider.lower()
-    if provider == "groq":
-        return _call_groq(prompt)
-    if provider == "gemini":
-        return _call_gemini(prompt)
+    if provider == "9router":
+        return _call_9router(prompt)
 
-    raise ValueError(f"Provedor de IA desconhecido: '{provider}'. Use 'groq' ou 'gemini'.")
+    raise ValueError(f"Provedor de IA desconhecido: '{provider}'. Use '9router'.")

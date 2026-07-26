@@ -12,7 +12,8 @@ Geração automática de currículos ATS-friendly a partir de um Perfil Mestre e
 
 - **Python 3.12+**
 - **Typst** — [Instalar](https://github.com/typst/typst/releases)
-- **Chave de API Groq** — [Obter gratuitamente](https://console.groq.com)
+- **9Router em execução** — [instalação e dashboard](https://9router.com/)
+- **Chave de API do 9Router** — crie-a no dashboard do seu roteador
 
 ---
 
@@ -33,7 +34,7 @@ pip install -r requirements.txt
 
 # 4. Configure as variáveis de ambiente
 cp .env.example .env
-# Edite .env e adicione sua GROQ_API_KEY
+# Edite .env e adicione sua NINE_ROUTER_API_KEY
 ```
 
 ---
@@ -44,13 +45,16 @@ Edite o arquivo `.env`:
 
 ```env
 # Obrigatório
-GROQ_API_KEY=gsk_...
+NINE_ROUTER_API_KEY=sk_...
 
-# Opcional — padrão: groq
-AI_PROVIDER=groq
+# Opcional — padrão: 9router
+AI_PROVIDER=9router
 
-# Opcional — padrão: llama-3.1-8b-instant (groq) | gemini-1.5-flash (gemini)
-AI_MODEL=llama-3.1-8b-instant
+# Opcional — URL local padrão do 9Router
+NINE_ROUTER_BASE_URL=http://127.0.0.1:20128/v1
+
+# Opcional — modelo ou Combo cadastrado no seu 9Router
+AI_MODEL=cc/claude-opus-4-7
 ```
 
 ---
@@ -118,20 +122,14 @@ cv-automator/
 
 ## Provedores de IA
 
-### Groq (padrão)
+### 9Router (padrão)
 ```env
-AI_PROVIDER=groq
-GROQ_API_KEY=gsk_...
-AI_MODEL=llama-3.1-8b-instant
-# Alternativa mais capaz:
-# AI_MODEL=meta-llama/llama-4-scout-17b-16e-instruct
-```
-
-### Google Gemini
-```env
-AI_PROVIDER=gemini
-GEMINI_API_KEY=AI...
-AI_MODEL=gemini-1.5-flash
+AI_PROVIDER=9router
+NINE_ROUTER_API_KEY=sk_...
+# O padrão atende à instalação local do 9Router.
+NINE_ROUTER_BASE_URL=http://127.0.0.1:20128/v1
+# Use um modelo ou Combo existente no seu dashboard.
+AI_MODEL=cc/claude-opus-4-7
 ```
 
 ---
@@ -159,6 +157,5 @@ AI_MODEL=gemini-1.5-flash
 
 ## Privacidade
 
-Os dados do perfil são enviados apenas para o provedor configurado.
-Tanto a Groq quanto o Google AI Studio oferecem opções de uso sem treinamento de modelos públicos.
-Consulte os termos do provedor escolhido.
+Os dados do perfil são enviados ao 9Router e, por ele, ao modelo/Combo configurado.
+Consulte os termos do 9Router e do provedor final selecionado.
