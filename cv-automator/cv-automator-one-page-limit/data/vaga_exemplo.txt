@@ -1,0 +1,47 @@
+Engenheiro DevOps Sênior — Fintech Scale-up
+
+Sobre a empresa:
+Somos uma fintech em rápido crescimento com operações em Brasil e América Latina.
+Nossa missão é democratizar o acesso a serviços financeiros.
+
+Responsabilidades:
+- Projetar, implementar e manter infraestrutura cloud (AWS) com foco em alta disponibilidade e segurança
+- Gerenciar clusters Kubernetes (EKS) com múltiplos ambientes (dev, staging, prod)
+- Desenvolver e otimizar pipelines CI/CD com GitHub Actions e ArgoCD
+- Implementar e manter infraestrutura como código com Terraform
+- Garantir observabilidade com Prometheus, Grafana e alertas proativos
+- Colaborar com times de desenvolvimento para acelerar entregas e reduzir lead time
+- Participar de rotação de plantão (on-call) com SLAs definidos
+
+Requisitos Obrigatórios:
+- Sólida experiência com AWS (mínimo 4 anos)
+- Kubernetes avançado: EKS, Helm, networking, RBAC
+- Terraform e GitOps (ArgoCD ou Flux)
+- Python ou Go para automação
+- Experiência com segurança em cloud: IAM, VPC, secrets management
+- Inglês intermediário ou superior
+
+Requisitos Desejáveis:
+- Certificação AWS (Solutions Architect ou DevOps Engineer)
+- Certificação CKA ou CKAD
+- Experiência com service mesh (Istio ou Linkerd)
+- Conhecimento de FinOps e otimização de custos cloud
+
+Benefícios:
+- Salário competitivo + equity
+- Vale refeição R$ 1.200/mês
+- Vale transporte ou auxílio home-office
+- Plano de saúde Bradesco Top Nacional (titular + dependentes)
+- Plano odontológico
+- Gympass Gold
+- PLR semestral
+- Licença maternidade e paternidade estendida
+- Day off no aniversário
+
+Modelo: 100% remoto
+Local: São Paulo (para reuniões presenciais trimestrais)
+
+Política de Diversidade:
+Somos uma empresa comprometida com diversidade e inclusão.
+Encorajamos candidaturas de grupos sub-representados.
+Esta vaga é afirmativa para pessoas com deficiência (PcD).

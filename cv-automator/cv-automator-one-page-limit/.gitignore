@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+output/*.pdf
+output/*.typ
+*.egg-info/
+dist/
+build/
+.DS_Store
+
+# Arquivos pessoais em /data
+data/perfil_mestre_definitivo.json
+
+# Arquivos pessoais em /output
+output/*

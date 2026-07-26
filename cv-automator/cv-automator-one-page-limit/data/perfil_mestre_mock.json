@@ -1,0 +1,42 @@
+{
+  "nome": "",
+  "titulo": "",
+  "email": "",
+  "telefone": "",
+  "linkedin": "",
+  "github": "",
+  "localizacao": "",
+  "resumo_base": "",
+  "experiencias": [
+    {
+      "empresa": "",
+      "cargo": "",
+      "periodo": "",
+      "responsabilidades": []
+    }
+  ],
+  "habilidades": {
+    "cloud": [],
+    "containers": [],
+    "ci_cd": [],
+    "iac": [],
+    "observabilidade": [],
+    "linguagens": [],
+    "seguranca": [],
+    "redes": []
+  },
+  "formacao": [
+    {
+      "instituicao": "",
+      "curso": "",
+      "periodo": ""
+    }
+  ],
+  "certificacoes": [],
+  "idiomas": [
+    {
+      "idioma": "",
+      "nivel": ""
+    }
+  ]
+}
