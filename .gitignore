@@ -1,4 +1,4 @@
-/cv-automator/cv-automator-one-page-limit/*.env
 
+**/*.env
 **/*.pdf
 **/*.__pycache__/
