@@ -159,3 +159,20 @@ AI_MODEL=cc/claude-opus-4-7
 
 Os dados do perfil são enviados ao 9Router e, por ele, ao modelo/Combo configurado.
 Consulte os termos do 9Router e do provedor final selecionado.
+
+## Problemas
+
+- JSON não é fonte da verdade, o schema é baseado no ptyhon e não no JSON, ou seja o JSON precisa seguir um mock-pré fixado.<br>
+    Atualmente:
+    ```txtx
+    `models.py` --> `compiler.py` tysp CV
+    ```
+    
+    Sujestão:
+    ```txt
+    JSON --> `models.py` prepare data --> ia_client.py --> `compiler.py` tysp CV
+    ```
+
+- O prompt fica no python inves de ficar em um JSON.
+
+**Ai sim o código começaria a fazer mais sentido inves de ser puro slop.**
