@@ -1,2 +1,0 @@
-- arquitetura de merfil mestre não é escalavel
-- não conecta com 9router proxy
