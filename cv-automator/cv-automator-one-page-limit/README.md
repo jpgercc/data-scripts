@@ -177,4 +177,9 @@ Consulte os termos do 9Router e do provedor final selecionado.
 
 - cpa melhor fazer tudo dnv q isso ta mt lixo
 
+- OOP pra que? deixa o arquivo ser livre? main defecada
+
 **Ai sim o código começaria a fazer mais sentido inves de ser puro slop.**
+
+###
+
