@@ -175,4 +175,6 @@ Consulte os termos do 9Router e do provedor final selecionado.
 
 - O prompt fica no python inves de ficar em um JSON.
 
+- cpa melhor fazer tudo dnv q isso ta mt lixo
+
 **Ai sim o código começaria a fazer mais sentido inves de ser puro slop.**
