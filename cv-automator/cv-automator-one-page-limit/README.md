@@ -175,7 +175,7 @@ Consulte os termos do 9Router e do provedor final selecionado.
 
 - O prompt fica no python inves de ficar em um JSON.
 
-- cpa melhor fazer tudo dnv q isso ta mt lixo
+- cpa melhor fazer tudo dnv q isso ta mt lixo 
 
 - OOP pra que? deixa o arquivo ser livre? main defecada
 
